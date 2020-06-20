@@ -1,20 +1,22 @@
 import numpy as np
 
+from typing import List
+
 from .emg_model import EMGModel
 
 
 class ActionModel:
-    def __init__(self, name: str):
+    __name: str
+    __emg_list: List[EMGModel]
+
+    def __init__(self, name: str, emg_list: List[EMGModel]):
         self.__name = name
-        self.r_bic = EMGModel(position="Right Bicep")
-        self.r_tri = EMGModel(position="Right Tricep")
-        self.l_bic = EMGModel(position="Left Bicep")
-        self.l_tri = EMGModel(position="Left Tricep")
-        self.r_thi = EMGModel(position="Right Thigh")
-        self.r_ham = EMGModel(position="Right Hamstring")
-        self.l_thi = EMGModel(position="Left Thigh")
-        self.l_ham = EMGModel(position="Left Hamstring")
+        self.__emg_list = emg_list
 
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def emg_list(self) -> List[EMGModel]:
+        return self.__emg_list

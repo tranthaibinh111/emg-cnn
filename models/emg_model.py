@@ -2,6 +2,9 @@ from typing import List
 
 
 class EMGModel:
+    __position: str
+    __data: List[int]
+
     def __init__(self, position: str):
         self.__position = position
         self.__data = list()

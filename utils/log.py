@@ -10,7 +10,7 @@ class Log:
     __logger = None
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> object:
         """ Static access method. """
         if not Log.__instance:
             Log()
@@ -33,3 +33,6 @@ class Log:
 
     def debug(self, message: str):
         self.__logger.debug(message)
+
+    def error(self, message: str):
+        self.__logger.error(message)

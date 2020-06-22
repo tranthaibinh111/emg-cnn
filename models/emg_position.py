@@ -7,3 +7,4 @@ class EMGPosition:
     R_Ham: str = "Right Hamstring"
     L_Thi: str = "Left Thigh"
     L_Ham: str = "Left Hamstring"
+# end class EMGPosition

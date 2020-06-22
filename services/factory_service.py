@@ -1,6 +1,7 @@
 from typing import Dict
 
 from utils import Log
+from .emg_service import EMGService
 from .person_service import PersonService
 
 
@@ -13,7 +14,10 @@ class FactoryService:
         if name in FactoryService.__instances:
             return FactoryService.__instances.get(name)
 
-        if name == PersonService.__name__:
+        if name == EMGService.__name__:
+            FactoryService.__instances[name] = EMGService()
+            return FactoryService.__instances[name]
+        elif name == PersonService.__name__:
             FactoryService.__instances[name] = PersonService()
             return FactoryService.__instances[name]
         else:
@@ -22,3 +26,5 @@ class FactoryService:
             log.error(message)
 
             return Exception(message)
+    # end get_instance()
+# end class FactoryService

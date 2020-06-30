@@ -16,21 +16,25 @@ def main():
     # person4 = person_service.load_uci_data(person_name="Person 4", folder_path="{0}/EMG/sub4".format(BASE_DIR))
     # endregion
 
-    # region Show plot
+    # region Show EMG data
     normal_actions = person_service.get_action(actions=person1.action,
                                                action_filter=ActionKind.get_normal_action())
-    action_names, emg_data = person_service.get_emg(actions=normal_actions, emg_position=EMGPosition.R_Bic)
-
-    emg_service.show_action(title="Normal Physical Actions", action_names=action_names, emg_data=emg_data,
-                            low_pass=True, multi_figure=True)
-    emg_service.show_action_spectrogram(title="Normal Physical Actions", action_names=action_names, emg_data=emg_data,
+    action_names, emg_data = person_service.get_emg(actions=normal_actions, emg_position=EMGPosition.R_Thi)
+    title = "Normal Physical Actions - {0}".format(EMGPosition.R_Thi)
+    # emg_service.show_action(title=title, action_names=action_names, emg_data=emg_data,
+    #                         low_pass=True, multi_figure=True)
+    emg_service.show_action_spectrogram(title=title, action_names=action_names, emg_data=emg_data,
                                         low_pass=True, multi_figure=True)
+    emg_service.show_action_scalogram(title=title, action_names=action_names, emg_data=emg_data,
+                                      low_pass=True, multi_figure=True)
     # aggressive_actions = person_service.get_action(actions=person1.action,
     #                                                action_filter=ActionKind.get_aggressive_action())
-    # emg_service.show_action(action_name="Aggressive Physical Actions",
-    #                         actions=aggressive_actions,
-    #                         emg_position=EMGPosition.R_Bic,
-    #                         multi_figure=True)
+    # action_names, emg_data = person_service.get_emg(actions=aggressive_actions, emg_position=EMGPosition.R_Thi)
+    # title = "Aggressive Physical Actions - {0}".format(EMGPosition.R_Thi)
+    # emg_service.show_action(title=title, action_names=action_names, emg_data=emg_data,
+    #                         low_pass=False, multi_figure=True)
+    # emg_service.show_action_scalogram(title=title, action_names=action_names, emg_data=emg_data,
+    #                                   low_pass=False, multi_figure=True)
     plt.show()
     # endregion
 # end main()

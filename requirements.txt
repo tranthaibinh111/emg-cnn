@@ -3,3 +3,4 @@ environs==8.0.0
 PyYAML==5.3.1
 matplotlib==3.2.2
 scipy==1.4.1
+PyWavelets==1.1.1

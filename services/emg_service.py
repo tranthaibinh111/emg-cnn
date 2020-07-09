@@ -33,7 +33,7 @@ class EMGService:
         1-Hz lowpass Butterworth filter was applied as recommended in [10]
         [10] S. Thomas, S. Ganapathy, G. Saon, and H. Soltau, “Analyzing convolutional neural networks for speech activity detection in mismatched acoustic conditions,” in Acoustics, Speech and Signal Processing (ICASSP), 2014 IEEE International Conference on, 2014, pp. 2519–2523
         :param data: List[float]
-            EMG signal data
+            UCI signal data
         :return: List[float]
         """
         # check emg_position
@@ -52,9 +52,9 @@ class EMGService:
     def __stft(self, data: List[float]) -> Tuple[List[float], List[float], List[float]]:
         r"""
         Compute the Short Time Fourier Transform (STFT).
-        [23] P. Xia, J. Hu, and Y. Peng, “EMG-Based Estimation of Limb Movement Using Deep Learning With Recurrent Convolutional Neural Networks,” Artif. Organs, vol. 42, no. 5, pp. E67–E77, 2018
+        [23] P. Xia, J. Hu, and Y. Peng, “UCI-Based Estimation of Limb Movement Using Deep Learning With Recurrent Convolutional Neural Networks,” Artif. Organs, vol. 42, no. 5, pp. E67–E77, 2018
         :param data: List[float]
-            EMG signal data
+            UCI signal data
         :return:
             frequencies: List[float]
                 Array of frequencies
@@ -83,24 +83,18 @@ class EMGService:
     # end __stft()
 
     # noinspection PyMethodMayBeStatic
-    def __cwt(self, data: List[float], scales: List[int], wavelet: str = "morl") -> List[float]:
+    def __cwt(self, data: List[float]) -> List[float]:
         r"""
         One dimensional Continuous Wavelet Transform.
         [25] M. P. G. Bhosale and S. T. Patil, “Classification of EEG Signals Using Wavelet Transform and Hybrid Classifier For Parkinson’s Disease Detection,” Int. J. Eng., vol. 2, no. 1, 2013.
         :param data: List[float]
-            EMG signal data
-        :param scales: List[float]
-            The wavelet scales to use. One can use
-            ``f = scale2frequency(wavelet, scale)/sampling_period`` to determine
-            what physical frequency, ``f``. Here, ``f`` is in hertz when the
-            ``sampling_period`` is given in seconds.
-        :param wavelet: Wavelet object or name
-            Wavelet to use
+            UCI signal data
         :return:
             power: List[float]
                 WT of `x`
         """
-        coefs, _ = pywt.cwt(data, scales, wavelet)
+        scales = np.arange(1, 51)
+        coefs, _ = pywt.cwt(data, scales, "morl")
         size_x, size_y = coefs.shape
         power = np.zeros((size_x, size_y), dtype="float64")
         for x in range(size_x):
@@ -113,8 +107,8 @@ class EMGService:
     # endregion
 
     # region Public
-    def show_action(self, title: str, action_names: List[str], emg_data: List[EMGModel], low_pass: bool = False,
-                    multi_figure: bool = False):
+    def show_time_series(self, title: str, action_names: List[str], emg_data: List[EMGModel], low_pass: bool = False,
+                         multi_figure: bool = False):
         # check validate
         if not self.__check_validate_after_show(action_names, emg_data):
             return
@@ -178,7 +172,7 @@ class EMGService:
         for index in range(number_subplot):
             data: List[float] = emg_data[index]
             data = data if not low_pass else self.__butter(data)
-            power = self.__cwt(data, np.arange(1, 256))
+            power = self.__cwt(data)
             axs[index].set_title(action_names[index])
             axs[index].set_xlim([0, len(data)])
             axs[index].set_xticks((np.arange(0, len(data) + 1000, 1000)))
@@ -187,5 +181,31 @@ class EMGService:
         if not multi_figure:
             plt.show()
     # end show_action_scalogram()
+
+    def export_spectrogram(self, file_name: str, data: List[float], low_pass: bool = False):
+        data = data if not low_pass else self.__butter(data)
+        f, t, power = self.__stft(data)
+
+        width = 1291
+        height = 499
+        my_dpi = 300.0
+        plt.figure(figsize=(width / my_dpi, height / my_dpi), dpi=my_dpi)
+        plt.axis('off')
+        plt.pcolormesh(t, f, power, cmap='viridis', vmin=power.min(), vmax=power.max())
+        plt.savefig(fname=file_name, bbox_inches='tight', pad_inches=0)
+    # end export_spectrogram()
+
+    def export_scalogram(self, file_name: str, data: List[float], low_pass: bool = False):
+        data = data if not low_pass else self.__butter(data)
+        power = self.__cwt(data)
+
+        width = 1291
+        height = 499
+        my_dpi = 300.0
+        plt.figure(figsize=(width / my_dpi, height / my_dpi), dpi=my_dpi)
+        plt.axis('off')
+        plt.imshow(power, cmap='jet', aspect='auto', vmin=power.min(), vmax=power.max())
+        plt.savefig(fname=file_name, dpi=my_dpi, bbox_inches='tight', pad_inches=0)
+    # end export_spectrogram()
     # endregion
 # end class EMGService

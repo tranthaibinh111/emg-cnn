@@ -1,7 +1,8 @@
+from enum import Enum
 from typing import List
 
 
-class ActionKind:
+class ActionKind(Enum):
     BOWING: str = "Bowing"
     CLAPPING: str = "Clapping"
     HANDSHAKING: str = "Handshaking"
@@ -24,15 +25,25 @@ class ActionKind:
     SLAPPING: str = "Slapping"
 
     @staticmethod
+    def list() -> List[str]:
+        return list(map(lambda a: a.value, ActionKind))
+    # end list()
+
+    @staticmethod
     def get_normal_action() -> List[str]:
-        return [ActionKind.BOWING, ActionKind.CLAPPING, ActionKind.HANDSHAKING, ActionKind.HUGGING, ActionKind.JUMPING,
-                ActionKind.RUNNING, ActionKind.SEATING, ActionKind.STANDING, ActionKind.WALKING, ActionKind.WAVING]
+        normal_action = [ActionKind.BOWING, ActionKind.CLAPPING, ActionKind.HANDSHAKING, ActionKind.HUGGING,
+                         ActionKind.JUMPING, ActionKind.RUNNING, ActionKind.SEATING, ActionKind.STANDING,
+                         ActionKind.WALKING, ActionKind.WAVING]
+
+        return list(map(lambda a: a.value, normal_action))
     # end get_normal_action()
 
     @staticmethod
     def get_aggressive_action() -> List[str]:
-        return [ActionKind.ELBOWING, ActionKind.FRONTKICKING, ActionKind.HAMERING, ActionKind.HEADERING,
-                ActionKind.KNEEING, ActionKind.PULLING, ActionKind.PUNCHING, ActionKind.PUSHING, ActionKind.SIDEKICKING,
-                ActionKind.SLAPPING]
+        aggressive_action = [ActionKind.ELBOWING, ActionKind.FRONTKICKING, ActionKind.HAMERING, ActionKind.HEADERING,
+                             ActionKind.KNEEING, ActionKind.PULLING, ActionKind.PUNCHING, ActionKind.PUSHING,
+                             ActionKind.SIDEKICKING, ActionKind.SLAPPING]
+
+        return list(map(lambda a: a.value, aggressive_action))
     # end get_aggressive_action()
 # end class ActionKind

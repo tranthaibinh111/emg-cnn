@@ -47,9 +47,9 @@ def __load_uci(folder: str) -> List[PersonModel]:
 # end __load_uci()
 
 
-def __show_plot(personals: List[PersonModel]):
+def __show_time_seriers(personals: List[PersonModel]):
     """
-    Show Time Series, Spectrogram, Scalogram from UCI data
+    Show Time Series from UCI data
     :param personals:
     :return:
     """
@@ -61,31 +61,25 @@ def __show_plot(personals: List[PersonModel]):
 
     for personal in personals:
         log.debug('Begin: {0}'.format(personal.name))
+        # region Normal Physical Actions
+        log.debug('{0} - Get Normal Physical Actions'.format(personal.name))
+        normal_actions = person_service.get_action(actions=personal.action,
+                                                   action_filter=ActionKind.get_normal_action())
         for position in EMGPosition.list():
-            # region Normal Physical Actions
-            log.debug('{0} - Get Normal Physical Actions'.format(personal.name))
-            normal_actions = person_service.get_action(actions=personal.action,
-                                                       action_filter=ActionKind.get_normal_action())
             normal_action_names, normal_emg_data = person_service.get_emg(actions=normal_actions, emg_position=position)
             normal_title = 'Normal Physical Actions - {0}'.format(position)
             # Time Series
             log.debug('{0} - Show Time Series - {1}'.format(personal.name, position))
             emg_service.show_time_series(title=normal_title, action_names=normal_action_names, emg_data=normal_emg_data,
                                          low_pass=True, multi_figure=True)
-            # Spectrogram
-            log.debug('{0} - Show Spectrogram - {1}'.format(personal.name, position))
-            emg_service.show_action_spectrogram(title=normal_title, action_names=normal_action_names,
-                                                emg_data=normal_emg_data, low_pass=True, multi_figure=True)
-            # Scalogram
-            log.debug('{0} - Show Scalogram - {1}'.format(personal.name, position))
-            emg_service.show_action_scalogram(title=normal_title, action_names=normal_action_names,
-                                              emg_data=normal_emg_data, low_pass=True, multi_figure=True)
-            # endregion
+        # end for
+        # endregion
 
-            # region Aggressive Physical Actions
-            log.debug('{0} - Get Aggressive Physical Actions'.format(personal.name))
-            aggressive_actions = person_service.get_action(actions=personal.action,
-                                                           action_filter=ActionKind.get_aggressive_action())
+        # region Aggressive Physical Actions
+        log.debug('{0} - Get Aggressive Physical Actions'.format(personal.name))
+        aggressive_actions = person_service.get_action(actions=personal.action,
+                                                       action_filter=ActionKind.get_aggressive_action())
+        for position in EMGPosition.list():
             aggressive_action_names, aggressive_emg_data = person_service.get_emg(actions=aggressive_actions,
                                                                                   emg_position=position)
             aggressive_title = 'Aggressive Physical Actions - {0}'.format(position)
@@ -93,16 +87,107 @@ def __show_plot(personals: List[PersonModel]):
             log.debug('{0} - Show Time Series - {1}'.format(personal.name, position))
             emg_service.show_time_series(title=aggressive_title, action_names=aggressive_action_names,
                                          emg_data=aggressive_emg_data, low_pass=False, multi_figure=True)
+        # end for
+        # endregion
+        log.debug('End: {0}'.format(personal.name))
+    # end for
+    plt.show()
+    log.debug('End Show Plot')
+# end __show_plot
+
+
+def __show_spectrogram(personals: List[PersonModel]):
+    """
+    Show Spectrogram from UCI data
+    :param personals:
+    :return:
+    """
+    log: Log = Log.get_instance()
+    emg_service: EMGService = FactoryService.get_instance(EMGService.__name__)
+    person_service: PersonService = FactoryService.get_instance(PersonService.__name__)
+
+    log.debug('Show Plot')
+
+    for personal in personals:
+        log.debug('Begin: {0}'.format(personal.name))
+        # region Normal Physical Actions
+        log.debug('{0} - Get Normal Physical Actions'.format(personal.name))
+        normal_actions = person_service.get_action(actions=personal.action,
+                                                   action_filter=ActionKind.get_normal_action())
+        for position in EMGPosition.list():
+            normal_action_names, normal_emg_data = person_service.get_emg(actions=normal_actions, emg_position=position)
+            normal_title = 'Normal Physical Actions - {0}'.format(position)
+            # Spectrogram
+            log.debug('{0} - Show Spectrogram - {1}'.format(personal.name, position))
+            emg_service.show_action_spectrogram(title=normal_title, action_names=normal_action_names,
+                                                emg_data=normal_emg_data, low_pass=True, multi_figure=True)
+        # end for
+        # endregion
+
+        # region Aggressive Physical Actions
+        log.debug('{0} - Get Aggressive Physical Actions'.format(personal.name))
+        aggressive_actions = person_service.get_action(actions=personal.action,
+                                                       action_filter=ActionKind.get_aggressive_action())
+        for position in EMGPosition.list():
+            aggressive_action_names, aggressive_emg_data = person_service.get_emg(actions=aggressive_actions,
+                                                                                  emg_position=position)
+            aggressive_title = 'Aggressive Physical Actions - {0}'.format(position)
             # Spectrogram
             log.debug('{0} - Show Spectrogram - {1}'.format(personal.name, position))
             emg_service.show_action_spectrogram(title=aggressive_title, action_names=aggressive_action_names,
                                                 emg_data=aggressive_emg_data, low_pass=False, multi_figure=True)
+        # end for
+        # endregion
+        log.debug('End: {0}'.format(personal.name))
+    # end for
+    plt.show()
+    log.debug('End Show Plot')
+# end __show_plot
+
+
+def __show_scalogram(personals: List[PersonModel]):
+    """
+    Show Scalogram from UCI data
+    :param personals:
+    :return:
+    """
+    log: Log = Log.get_instance()
+    emg_service: EMGService = FactoryService.get_instance(EMGService.__name__)
+    person_service: PersonService = FactoryService.get_instance(PersonService.__name__)
+
+    log.debug('Show Plot')
+
+    for personal in personals:
+        log.debug('Begin: {0}'.format(personal.name))
+        # region Normal Physical Actions
+        log.debug('{0} - Get Normal Physical Actions'.format(personal.name))
+        normal_actions = person_service.get_action(actions=personal.action,
+                                                   action_filter=ActionKind.get_normal_action())
+        for position in EMGPosition.list():
+            normal_action_names, normal_emg_data = person_service.get_emg(actions=normal_actions, emg_position=position)
+            normal_title = 'Normal Physical Actions - {0}'.format(position)
+            # Scalogram
+            log.debug('{0} - Show Scalogram - {1}'.format(personal.name, position))
+            emg_service.show_action_scalogram(title=normal_title, action_names=normal_action_names,
+                                              emg_data=normal_emg_data, low_pass=True, multi_figure=True)
+            # endregion
+        # end for
+        # endregion
+
+        # region Aggressive Physical Actions
+        log.debug('{0} - Get Aggressive Physical Actions'.format(personal.name))
+        aggressive_actions = person_service.get_action(actions=personal.action,
+                                                       action_filter=ActionKind.get_aggressive_action())
+        for position in EMGPosition.list():
+            aggressive_action_names, aggressive_emg_data = person_service.get_emg(actions=aggressive_actions,
+                                                                                  emg_position=position)
+            aggressive_title = 'Aggressive Physical Actions - {0}'.format(position)
             # Scalogram
             log.debug('{0} - Show Scalogram - {1}'.format(personal.name, position))
             emg_service.show_action_scalogram(title=aggressive_title, action_names=aggressive_action_names,
                                               emg_data=aggressive_emg_data, low_pass=False, multi_figure=True)
-            # endregion
         # end for
+        # endregion
         log.debug('End: {0}'.format(personal.name))
     # end for
     plt.show()
@@ -112,7 +197,7 @@ def __show_plot(personals: List[PersonModel]):
 
 
 def __export_spectrogram(personals: List[PersonModel],
-                         source_path: str = '{0}/exports/images/spectrogram/'.format(BASE_DIR)):
+                         source_path: str = '{0}\\exports\\images\\spectrogram'.format(BASE_DIR)):
     """
     Export Spectrogram image for prepare data (CNN)
     :param personals:
@@ -129,7 +214,7 @@ def __export_spectrogram(personals: List[PersonModel],
             log.debug('{0} : {1}'.format(personal.name, action.name))
             for emg in action.emg_data:
                 now = datetime.today()
-                file_name = "{0}/{1}-{2}-{3}-{4}.png".format(source_path, action.name, emg.position,
+                file_name = "{0}\\{1}-{2}-{3}-{4}.png".format(source_path, action.name, emg.position,
                                                              personal.name, now.strftime("%Y%m%d%H%M%S"))
                 log.debug('Saving: {0}'.format(file_name))
                 emg_service.export_spectrogram(file_name=file_name, data=emg.data, low_pass=True)
@@ -143,7 +228,7 @@ def __export_spectrogram(personals: List[PersonModel],
 
 
 def __export_scalogram(personals: List[PersonModel],
-                        source_path: str = '{0}/exports/images/scalogram/'.format(BASE_DIR)):
+                        source_path: str = '{0}\\exports\\images\\scalogram'.format(BASE_DIR)):
     """
     Export Scalogram image for prepare data (CNN)
     :param personals:
@@ -160,7 +245,7 @@ def __export_scalogram(personals: List[PersonModel],
             log.debug('{0} : {1}'.format(personal.name, action.name))
             for emg in action.emg_data:
                 now = datetime.today()
-                file_name = "{0}/{1}-{2}-{3}-{4}.png".format(source_path, action.name, emg.position,
+                file_name = "{0}\\{1}-{2}-{3}-{4}.png".format(source_path, action.name, emg.position,
                                                              personal.name, now.strftime("%Y%m%d%H%M%S"))
                 log.debug('Saving: {0}'.format(file_name))
                 emg_service.export_scalogram(file_name=file_name, data=emg.data, low_pass=True)
@@ -178,7 +263,9 @@ def main():
     personals = __load_uci(folder='{0}/imports/UCI/'.format(BASE_DIR))
 
     # Show UCI data
-    __show_plot(personals)
+    __show_time_seriers(personals)
+    __show_spectrogram(personals)
+    __show_scalogram(personals[:1])
 
     # Export Spectrogram Image
     __export_spectrogram(personals)

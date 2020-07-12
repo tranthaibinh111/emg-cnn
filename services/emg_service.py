@@ -5,12 +5,13 @@ from matplotlib import pyplot as plt
 from scipy import signal
 from typing import List, Tuple
 
+from utils import Log
 from models import EMGModel
 
 
 class EMGService:
     def __init__(self):
-        pass
+        self.__log = Log.get_instance()
 
     # region Private
     def __check_validate_after_show(self, action_names: List[str], emg_data: List[EMGModel]) -> bool:
@@ -116,7 +117,7 @@ class EMGService:
         number_subplot: int = len(emg_data)
         fig, axs = plt.subplots(nrows=number_subplot, ncols=1)
         fig.suptitle(title)
-        fig.subplots_adjust(left=0.05, bottom=0.05, right=0.96, top=0.94, hspace=2.5)
+        fig.subplots_adjust(left=0.035, bottom=0.05, right=0.985, top=0.94, hspace=1.0)
 
         for index in range(number_subplot):
             data: List[float] = emg_data[index]
@@ -127,8 +128,10 @@ class EMGService:
             axs[index].set_ylim([min(data), max(data)])
             axs[index].plot(data)
 
-        for ax in axs.flat:
-            ax.set(xlabel="Time [millisecond]", ylabel="Amplitude [μV]")
+        fig.add_subplot(111, frame_on=False)
+        plt.tick_params(labelcolor="none", bottom=False, left=False)
+        plt.xlabel('Time [millisecond]')
+        plt.ylabel('Amplitude [μV]')
 
         if not multi_figure:
             plt.show()

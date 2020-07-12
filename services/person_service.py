@@ -14,9 +14,7 @@ class PersonService:
     # region Private
     def __load_uci_action_data(self, person_name: str, action_name: str, file_path: str) -> ActionModel:
         data = np.loadtxt(open(file_path))
-        emg_positions = [EMGPosition.R_BIC, EMGPosition.R_TRI, EMGPosition.L_BIC, EMGPosition.L_TRI,
-                         EMGPosition.R_THI, EMGPosition.R_HAM, EMGPosition.L_THI, EMGPosition.L_HAM]
-        emg_data = [EMGModel(position) for position in emg_positions]
+        emg_data = [EMGModel(position.value) for position in EMGPosition]
         action = ActionModel(name=action_name, emg_data=emg_data)
 
         for row in data:
